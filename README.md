@@ -32,7 +32,7 @@
     ```
 2. 转到本项目所在的目录，输入以下命令
     ```
-    pyinstaller -F -w main.py
+    pyinstaller main.spec
     ```
 3. 进入`dist`文件夹即可看到打包成的.exe文件
 
