@@ -67,9 +67,16 @@ def setup_menu():
     menu_file.add_separator()
     menu_file.add_command(label="退出", command=window.destroy)
     menu_help.add_command(label="帮助", command=lambda: messagebox.showinfo(
-        "使用说明", "使用说明：\n1. 程序会尝试加载默认文件 list.xlsx\n2. 如果未找到默认文件，请点击“文件 -> 导入”选择名单文件\n3. 点击点名按钮进行随机点名\n4. 点击退出按钮关闭程序"))
+        "使用说明", "使用说明：\n"
+        "1. 程序会尝试加载默认文件 list.xlsx\n"
+        "2. 如果未找到默认文件，请点击“文件 -> 导入”选择名单文件\n"
+        "3. 点击点名按钮进行随机点名\n"
+        "4. 点击退出按钮关闭程序"))
     menu_help.add_command(label="关于", command=lambda: messagebox.showinfo(
-        "关于", "随机点名器\n版本 1.0\n作者：Astral & Colipot\nGithub 开源地址: github.com/Meltide/RandomCall"))
+        "关于", "随机点名器\n"
+        "版本 1.0\n"
+        "作者：Astral & Colipot\n"
+        "Github 开源地址: github.com/Meltide/RandomCall"))
     window.config(menu=main_menu)
 
 def setup_ui():
