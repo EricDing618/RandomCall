@@ -1,13 +1,14 @@
 <div align="center">
 
 # RandomCall
-简易的Python随机点名器
 ![GitHub repo size](https://img.shields.io/github/repo-size/Meltide/RandomCall)
 ![GitHub Repo stars](https://img.shields.io/github/stars/Meltide/RandomCall?style=flat)
 ![GitHub branch status](https://img.shields.io/github/checks-status/Meltide/RandomCall/main)
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/t/Meltide/RandomCall)
 ![GitHub last commit](https://img.shields.io/github/last-commit/Meltide/RandomCall)
 ![GitHub Created At](https://img.shields.io/github/created-at/Meltide/RandomCall) 
+
+简易的Python随机点名器
 
 </div>
 
