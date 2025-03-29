@@ -1,6 +1,6 @@
 <div align="center">
 
-!(logo)[icon.ico]
+![icon](https://github.com/user-attachments/assets/0325bdf9-53ba-493c-b057-3b142b325d36)
 
 # RandomCall
 ![GitHub repo size](https://img.shields.io/github/repo-size/Meltide/RandomCall)
