@@ -33,3 +33,6 @@
     pyinstaller -F -w main.py
     ```
 3. 进入`dist`文件夹即可看到打包成的.exe文件
+
+> [!TIP]
+> 若出现“'pyinstaller' 不是内部或外部命令，也不是可运行的程序或批处理文件。”的问题，请参考文章 [https://www.cnblogs.com/chenyq/p/15190506.html](测试问题——安装了pyinstall 提示 'pyinstall' 不是内部或外部命令，也不是可运行的序 或批处理文件的解决方案)
