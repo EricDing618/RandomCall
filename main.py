@@ -7,7 +7,11 @@ import os
 # 初始化窗口
 window = tk.Tk()
 window.title("随机点名器")
-window.geometry("400x200")
+x = int(window.winfo_screenwidth() / 2 - 200)
+y = int(window.winfo_screenheight() / 2 - 100)
+window.geometry(f"400x200+{x}+{y}")
+window.resizable(0, 0) 
+window.iconbitmap("icon.ico")
 
 # 全局变量
 name_list = []
