@@ -9,11 +9,11 @@ from PIL import Image, ImageTk
 
 # 初始化窗口
 window = tk.Tk()
-window.title("随机点名器")
+window.title("RandomCall")
 window.configure(bg="white")
 x = int(window.winfo_screenwidth() / 2 - 200)
-y = int(window.winfo_screenheight() / 2 - 100)
-window.geometry(f"400x280+{x}+{y}")
+y = int(window.winfo_screenheight() / 2 - 112)
+window.geometry(f"400x225+{x}+{y}")
 window.resizable(0, 0)
 
 # 设置窗口图标
@@ -23,12 +23,36 @@ icon_image = Image.open(BytesIO(icon_data))
 icon_photo = ImageTk.PhotoImage(icon_image)
 window.iconphoto(True, icon_photo)
 
+def new_window():
+    # 关于窗口
+    about = tk.Toplevel(window)
+    about.focus_force()
+    about.title("关于")
+    about_x = int(window.winfo_screenwidth() / 2 - 150)
+    about_y = int(window.winfo_screenheight() / 2 - 100)
+    about.geometry(f"300x200+{about_x}+{about_y}")
+    about.configure(bg="white")
+    about.resizable(0, 0)
+
+    about_var = tk.StringVar()
+
+    tk.Label(about, text="RandomCall", font=("Tahoma", 30, "bold"), bg="white").pack(padx=5, pady=5, anchor="nw")
+    tk.Label(about, text="简易的Python随机点名器", font=("黑体", 12), bg="white").pack(padx=5, anchor="nw")
+    t = tk.Text(about, height=50, font=("Arial", 10), bg="white", relief="groove")
+    t.pack(padx=5, pady=5, anchor="nw")
+    t.insert("end",
+             "版本 1.2\n\n"
+             "作者: Github@Meltide\n"
+             "开源地址: github.com/Meltide/RandomCall")
+    t.config(state="disabled")
+
 # 全局变量
 name_list = []
 called_name_list = []
 var = tk.StringVar()
 check_var = tk.IntVar()
 text_status = 0
+animation_running = False
 
 def load_names_from_file(file_path):
     # 从 Excel 文件加载名单
@@ -65,25 +89,39 @@ def file_dialog():
     else:
         var.set("未选择文件")
 
+def animate_name():
+    # 动画效果：不断变换名字
+    global animation_running
+    if not animation_running or not name_list:
+        return
+    random_name = random.choice(name_list)
+    var.set(random_name)
+    window.after(65, animate_name)
+
 def start():
     # 随机选择一个名字
+    global animation_running
     if not name_list:
-        if called_name_list:  # 如果已点名列表不为空，说明名单已用完
+        if called_name_list:
             var.set("名单已用完")
-        else:  # 如果已点名列表为空，说明名单本身为空
+        else:
             var.set("名单为空")
         return
-    if check_var.get() == 0:
-        random.shuffle(name_list)
-        var.set(name_list[0])
-        called_name_list.append(name_list[0])
-        name_list.remove(name_list[0])
-        if not name_list:  # 如果名单用完，提示“名单已用完”
+    if not animation_running:
+        animation_running = True
+        animate_name()
+        window.after(800, stop_animation) 
+
+def stop_animation():
+    # 停止动画并显示最终名字
+    global animation_running
+    animation_running = False
+    if name_list:
+        selected_name = name_list.pop(0)
+        var.set(selected_name)
+        called_name_list.append(selected_name)
+        if not name_list:
             var.set("名单已用完")
-            return
-    else:
-        random.shuffle(name_list)
-        var.set(name_list[0])
 
 def reset():
     global name_list, called_name_list
@@ -100,7 +138,7 @@ def called_name_list_show():
     # 显示已点名名单
     if check_var.get() == 0:
         if called_name_list:
-            messagebox.showinfo("已点名名单", "\n".join(called_name_list))
+            messagebox.showinfo("已点名名单", ", ".join(called_name_list))
         else:
             messagebox.showinfo("已点名名单", "没有已点名名单")
     else:
@@ -114,7 +152,7 @@ def setup_menu():
     menu_help = tk.Menu(main_menu, tearoff=0)
     main_menu.add_cascade(label="帮助", menu=menu_help)
     menu_file.add_command(label="已点名名单", command=called_name_list_show)
-    menu_file.add_command(label="导入", command=file_dialog)
+    menu_file.add_command(label="导入名单", command=file_dialog)
     menu_file.add_separator()
     menu_file.add_command(label="退出", command=window.destroy)
     menu_help.add_command(label="帮助", command=lambda: messagebox.showinfo(
@@ -125,11 +163,7 @@ def setup_menu():
         "4. 点击“点名”按钮进行随机点名\n"
         "5. 点击“重置”按钮清空已点名名单\n"
         "6. 点击“文件 -> 已点名名单”查看已点名名单\n"))
-    menu_help.add_command(label="关于", command=lambda: messagebox.showinfo(
-        "关于", "随机点名器\n"
-        "版本 1.1\n"
-        "作者：Astral & Colipot\n"
-        "Github 开源地址: github.com/Meltide/RandomCall"))
+    menu_help.add_command(label="关于", command=new_window)
     window.config(menu=main_menu)
 
 def setup_ui():
@@ -139,14 +173,14 @@ def setup_ui():
     window.rowconfigure(0, weight=1)
     window.rowconfigure(1, weight=1)
     window.rowconfigure(2, weight=1)
-    tk.Label(window, textvariable=var, font=("黑体", 40, "bold"), fg="black", bg="white").grid(row=0, column=0, columnspan=2, pady=15)
-    tk.Button(window, text="点名", height=2, width=10, font=("黑体", 20), relief="flat", bg="#A5D6A7", command=start).grid(row=2, column=0, pady=10)
-    tk.Checkbutton(window, text="允许重复点名", variable=check_var, onvalue=1, offvalue=0, relief="flat", bg="white").grid(row=1, column=0, columnspan=2, pady=5)
-    tk.Button(window, text="重置", height=2, width=10, font=("黑体", 20), relief="flat", bg="#A5D6A7", command=reset).grid(row=2, column=1, pady=5)
+    tk.Label(window, textvariable=var, font=("黑体", 40, "bold"), fg="black", bg="white").grid(row=0, column=0, columnspan=2, pady=10)
+    tk.Checkbutton(window, text="允许重复点名", variable=check_var, onvalue=1, offvalue=0, bd=0, bg="white").grid(row=1, column=0, columnspan=2)
+    tk.Button(window, text="点名", height=2, width=12, font=("黑体", 20), relief="flat", bd=0, bg="#A5D6A7", activebackground="#43A047", command=start).grid(row=2, column=0, pady=10)
+    tk.Button(window, text="重置", height=2, width=12, font=("黑体", 20), relief="flat", bd=0, bg="#A5D6A7", activebackground="#43A047", command=reset).grid(row=2, column=1, pady=5)
     var.set("准备就绪")
 
 # 主程序
-load_default_file()  # 尝试加载默认文件
+load_default_file()
 setup_menu()
 setup_ui()
 window.mainloop()
