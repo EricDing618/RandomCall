@@ -52,7 +52,7 @@ called_name_list = []
 var = tk.StringVar()
 check_var = tk.IntVar()
 text_status = 0
-animation_running = False  # 用于控制动画状态
+animation_running = False
 
 def load_names_from_file(file_path):
     # 从 Excel 文件加载名单
@@ -102,9 +102,9 @@ def start():
     # 随机选择一个名字
     global animation_running
     if not name_list:
-        if called_name_list:  # 如果已点名列表不为空，说明名单已用完
+        if called_name_list:
             var.set("名单已用完")
-        else:  # 如果已点名列表为空，说明名单本身为空
+        else:
             var.set("名单为空")
         return
     if not animation_running:
@@ -120,7 +120,7 @@ def stop_animation():
         selected_name = name_list.pop(0)
         var.set(selected_name)
         called_name_list.append(selected_name)
-        if not name_list:  # 如果名单用完，提示“名单已用完”
+        if not name_list:
             var.set("名单已用完")
 
 def reset():
@@ -180,7 +180,7 @@ def setup_ui():
     var.set("准备就绪")
 
 # 主程序
-load_default_file()  # 尝试加载默认文件
+load_default_file()
 setup_menu()
 setup_ui()
 window.mainloop()
