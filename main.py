@@ -41,7 +41,7 @@ def new_window():
     t = tk.Text(about, height=50, font=("Arial", 10), bg="white", relief="groove")
     t.pack(padx=5, pady=5, anchor="nw")
     t.insert("end",
-             "版本 1.3\n\n"
+             "版本 1.2\n\n"
              "作者: Github@Meltide\n"
              "开源地址: github.com/Meltide/RandomCall")
     t.config(state="disabled")
