@@ -138,7 +138,7 @@ def called_name_list_show():
     # 显示已点名名单
     if check_var.get() == 0:
         if called_name_list:
-            messagebox.showinfo("已点名名单", "\n".join(called_name_list))
+            messagebox.showinfo("已点名名单", ", ".join(called_name_list))
         else:
             messagebox.showinfo("已点名名单", "没有已点名名单")
     else:
