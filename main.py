@@ -10,9 +10,10 @@ from PIL import Image, ImageTk
 # 初始化窗口
 window = tk.Tk()
 window.title("随机点名器")
+window.configure(bg="white")
 x = int(window.winfo_screenwidth() / 2 - 200)
 y = int(window.winfo_screenheight() / 2 - 100)
-window.geometry(f"400x200+{x}+{y}")
+window.geometry(f"400x280+{x}+{y}")
 window.resizable(0, 0)
 
 # 设置窗口图标
@@ -24,7 +25,10 @@ window.iconphoto(True, icon_photo)
 
 # 全局变量
 name_list = []
+called_name_list = []
 var = tk.StringVar()
+check_var = tk.IntVar()
+text_status = 0
 
 def load_names_from_file(file_path):
     # 从 Excel 文件加载名单
@@ -50,7 +54,7 @@ def load_default_file():
 
 def file_dialog():
     # 打开文件对话框选择 Excel 文件
-    file_path = filedialog.askopenfilename(filetypes=[("Excel files", "*.xlsx")])
+    file_path = filedialog.askopenfilename(title="导入名单", filetypes=[("Excel 文件", "*.xlsx"), ("所有文件", "*.*")])
     if file_path:
         global name_list
         name_list = load_names_from_file(file_path)
@@ -64,10 +68,43 @@ def file_dialog():
 def start():
     # 随机选择一个名字
     if not name_list:
-        var.set("名单为空")
+        if called_name_list:  # 如果已点名列表不为空，说明名单已用完
+            var.set("名单已用完")
+        else:  # 如果已点名列表为空，说明名单本身为空
+            var.set("名单为空")
         return
-    random.shuffle(name_list)
-    var.set(name_list[0])
+    if check_var.get() == 0:
+        random.shuffle(name_list)
+        var.set(name_list[0])
+        called_name_list.append(name_list[0])
+        name_list.remove(name_list[0])
+        if not name_list:  # 如果名单用完，提示“名单已用完”
+            var.set("名单已用完")
+            return
+    else:
+        random.shuffle(name_list)
+        var.set(name_list[0])
+
+def reset():
+    global name_list, called_name_list
+    # 清空已点名的名单
+    called_name_list.clear()
+    # 重新加载默认名单
+    load_default_file()
+    if name_list:
+        var.set("准备就绪")
+    else:
+        var.set("名单为空")
+
+def called_name_list_show():
+    # 显示已点名名单
+    if check_var.get() == 0:
+        if called_name_list:
+            messagebox.showinfo("已点名名单", "\n".join(called_name_list))
+        else:
+            messagebox.showinfo("已点名名单", "没有已点名名单")
+    else:
+        messagebox.showinfo("已点名名单", "允许重复点名时，已点名名单不显示")
 
 def setup_menu():
     # 设置菜单栏
@@ -76,6 +113,7 @@ def setup_menu():
     main_menu.add_cascade(label="文件", menu=menu_file)
     menu_help = tk.Menu(main_menu, tearoff=0)
     main_menu.add_cascade(label="帮助", menu=menu_help)
+    menu_file.add_command(label="已点名名单", command=called_name_list_show)
     menu_file.add_command(label="导入", command=file_dialog)
     menu_file.add_separator()
     menu_file.add_command(label="退出", command=window.destroy)
@@ -83,19 +121,28 @@ def setup_menu():
         "使用说明", "使用说明：\n"
         "1. 程序会尝试加载默认文件 list.xlsx\n"
         "2. 如果未找到默认文件，请点击“文件 -> 导入”选择名单文件\n"
-        "3. 点击点名按钮进行随机点名\n"
-        "4. 点击退出按钮关闭程序"))
+        "3. 可以选择是否允许重复点名\n"
+        "4. 点击“点名”按钮进行随机点名\n"
+        "5. 点击“重置”按钮清空已点名名单\n"
+        "6. 点击“文件 -> 已点名名单”查看已点名名单\n"))
     menu_help.add_command(label="关于", command=lambda: messagebox.showinfo(
         "关于", "随机点名器\n"
-        "版本 1.0\n"
+        "版本 1.1\n"
         "作者：Astral & Colipot\n"
         "Github 开源地址: github.com/Meltide/RandomCall"))
     window.config(menu=main_menu)
 
 def setup_ui():
     # 设置界面
-    tk.Label(window, textvariable=var, font=("黑体", 40, "bold"), fg="black").pack(pady=15)
-    tk.Button(window, text="点名", height=2, width=20, font=("黑体", 20), relief="groove", bg="#A5D6A7", command=start).pack(pady=10)
+    window.columnconfigure(0, weight=1)
+    window.columnconfigure(1, weight=1)
+    window.rowconfigure(0, weight=1)
+    window.rowconfigure(1, weight=1)
+    window.rowconfigure(2, weight=1)
+    tk.Label(window, textvariable=var, font=("黑体", 40, "bold"), fg="black", bg="white").grid(row=0, column=0, columnspan=2, pady=15)
+    tk.Button(window, text="点名", height=2, width=10, font=("黑体", 20), relief="flat", bg="#A5D6A7", command=start).grid(row=2, column=0, pady=10)
+    tk.Checkbutton(window, text="允许重复点名", variable=check_var, onvalue=1, offvalue=0, relief="flat", bg="white").grid(row=1, column=0, columnspan=2, pady=5)
+    tk.Button(window, text="重置", height=2, width=10, font=("黑体", 20), relief="flat", bg="#A5D6A7", command=reset).grid(row=2, column=1, pady=5)
     var.set("准备就绪")
 
 # 主程序
