@@ -6,7 +6,6 @@ import os
 import base64
 from io import BytesIO
 from PIL import Image, ImageTk
-import time
 
 # 初始化窗口
 window = tk.Tk()
