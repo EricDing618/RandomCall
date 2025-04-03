@@ -109,8 +109,12 @@ def start():
         return
     if not animation_running:
         animation_running = True
+        
+        # 禁用“点名”按钮并显示“点名中”
+        start_button.config(state="disabled", text="点名中")
+        
         animate_name()
-        window.after(800, stop_animation) 
+        window.after(800, stop_animation)
 
 def stop_animation():
     # 停止动画并显示最终名字
@@ -122,6 +126,9 @@ def stop_animation():
         called_name_list.append(selected_name)
         if not name_list:
             var.set("名单已用完")
+    
+    # 恢复“点名”按钮
+    start_button.config(state="normal", text="点名")
 
 def reset():
     global name_list, called_name_list
@@ -167,6 +174,7 @@ def setup_menu():
     window.config(menu=main_menu)
 
 def setup_ui():
+    global start_button  # 声明全局变量以便修改按钮状态
     # 设置界面
     window.columnconfigure(0, weight=1)
     window.columnconfigure(1, weight=1)
@@ -175,7 +183,8 @@ def setup_ui():
     window.rowconfigure(2, weight=1)
     tk.Label(window, textvariable=var, font=("黑体", 40, "bold"), fg="black", bg="white").grid(row=0, column=0, columnspan=2, pady=10)
     tk.Checkbutton(window, text="允许重复点名", variable=check_var, onvalue=1, offvalue=0, bd=0, bg="white").grid(row=1, column=0, columnspan=2)
-    tk.Button(window, text="点名", height=2, width=12, font=("黑体", 20), relief="flat", bd=0, bg="#A5D6A7", activebackground="#43A047", command=start).grid(row=2, column=0, pady=10)
+    start_button = tk.Button(window, text="点名", height=2, width=12, font=("黑体", 20), relief="flat", bd=0, bg="#A5D6A7", activebackground="#43A047", command=start)
+    start_button.grid(row=2, column=0, pady=10)
     tk.Button(window, text="重置", height=2, width=12, font=("黑体", 20), relief="flat", bd=0, bg="#A5D6A7", activebackground="#43A047", command=reset).grid(row=2, column=1, pady=5)
     var.set("准备就绪")
 
